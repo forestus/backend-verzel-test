@@ -44,8 +44,8 @@ class ClassController {
         exhibition: dateFormat,
         module: moduleAlreadyExists
       });
-      const userSaved = await classesRepository.save(classData);
-      return response.json(await formatDate(userSaved)).status(201);
+      const classSaved = await classesRepository.save(classData);
+      return response.json(await formatDate(classSaved)).status(201);
     } catch (error) {
       throw new AppError(error);
     }
@@ -57,9 +57,9 @@ class ClassController {
     const classesRepository = getCustomRepository(ClassesRepository);
     const modulesRepository = getCustomRepository(ModulesRepository);
     const moduleAlreadyExists = await modulesRepository.findOne({
-      id1
+      id: id1
     });
-    const classAlreadyExists = await classesRepository.findOne({ id2 });
+    const classAlreadyExists = await classesRepository.findOne({ id: id2 });
 
     return response.json(await formatDate(classAlreadyExists)).status(200);
   }

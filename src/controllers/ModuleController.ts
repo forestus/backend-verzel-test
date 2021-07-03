@@ -63,14 +63,14 @@ class ModuleController {
     const moduleAlreadyExists = await modulesRepository.findOne({
       id
     });
-    const classAlreadyExists = await classesRepository.find({
+    const singleClass = await classesRepository.find({
       where: {
         module: moduleAlreadyExists.id
       },
       order: { name: 'ASC' }
     });
 
-    return response.json(await formatDate(classAlreadyExists)).status(200);
+    return response.json(await formatDate(singleClass)).status(200);
   }
 }
 export default new ModuleController();
