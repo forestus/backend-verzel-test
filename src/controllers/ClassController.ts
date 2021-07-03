@@ -50,5 +50,18 @@ class ClassController {
       throw new AppError(error);
     }
   }
+
+  async findOneModuleandClass(request: Request, response: Response) {
+    const { id1 } = request.params;
+    const { id2 } = request.params;
+    const classesRepository = getCustomRepository(ClassesRepository);
+    const modulesRepository = getCustomRepository(ModulesRepository);
+    const moduleAlreadyExists = await modulesRepository.findOne({
+      id1
+    });
+    const classAlreadyExists = await classesRepository.findOne({ id2 });
+
+    return response.json(await formatDate(classAlreadyExists)).status(200);
+  }
 }
 export default new ClassController();

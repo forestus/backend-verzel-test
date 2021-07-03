@@ -4,13 +4,11 @@ import { ModulesRepository } from '@repositories/ModulesRepository';
 import { AppError } from '@errors/AppError';
 import { ClassesRepository } from '@repositories/ClassesRepository';
 import { validateId, validateStore } from '@Utils/validators/moduleValidate';
-import moment from 'moment';
 import { formatDate } from '../services/dateFormatService';
 class ModuleController {
   async store(request: Request, response: Response) {
     const { name } = request.body;
     // validation
-    console.log(name);
     await validateStore({ name });
 
     const modulesRepository = getCustomRepository(ModulesRepository);
