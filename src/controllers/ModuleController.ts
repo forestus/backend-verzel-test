@@ -15,7 +15,7 @@ class ModuleController {
     const moduleAlreadyExists = await modulesRepository.findOne({ name });
 
     if (moduleAlreadyExists) {
-      throw new AppError('User Already Exists!', 409);
+      throw new AppError('Module Already Exists!', 409);
     }
 
     try {
@@ -73,6 +73,34 @@ class ModuleController {
     return response.json(await formatDate(singleClass)).status(200);
   }
 
+  async update(request: Request, response: Response) {
+    const { id } = request.params;
+    const { name } = request.body;
+    // validation
+    await validateId(id);
+
+    const modulesRepository = getCustomRepository(ModulesRepository);
+    const moduleAlreadyExists = await modulesRepository.findOne({ id });
+
+    if (!moduleAlreadyExists) {
+      throw new AppError('Module Not Found!', 404);
+    }
+
+    if (moduleAlreadyExists.name == name) {
+      throw new AppError('Module Params Already Exists!', 409);
+    }
+
+    try {
+      const moduleData = await modulesRepository.save({
+        ...moduleAlreadyExists,
+        name
+      });
+      return response.json(moduleData).status(200);
+    } catch (error) {
+      throw new AppError(error);
+    }
+  }
+
   async destroy(request: Request, response: Response) {
     const { id } = request.params;
     // validation
@@ -82,11 +110,11 @@ class ModuleController {
     const [moduleAlreadyExists] = await modulesRepository.find({ id });
 
     if (!moduleAlreadyExists) {
-      throw new AppError('Class Not Found!', 404);
+      throw new AppError('Module Not Found!', 404);
     }
     try {
       await modulesRepository.delete(moduleAlreadyExists.id);
-      return response.status(200).json(await formatDate(moduleAlreadyExists));
+      return response.status(200);
     } catch (error) {
       throw new AppError(error);
     }

@@ -5,8 +5,8 @@ import moduleRouter from './module';
 
 const routes = Router();
 
-routes.use('/users', userRouter);
 routes.use('/class', classRouter);
 routes.use('/module', moduleRouter);
+routes.use('/users', userRouter);
 
 export default routes;

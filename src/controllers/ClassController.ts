@@ -3,7 +3,11 @@ import { getCustomRepository } from 'typeorm';
 import { ClassesRepository } from '@repositories/ClassesRepository';
 import { AppError } from '@errors/AppError';
 import { ModulesRepository } from '@repositories/ModulesRepository';
-import { validateId, validateStore } from '@Utils/validators/classValidate';
+import {
+  validateId,
+  validateStore,
+  validateUpdate
+} from '@Utils/validators/classValidate';
 import moment from 'moment';
 import { formatDate } from 'src/services/dateFormatService';
 class ClassController {
@@ -62,6 +66,49 @@ class ClassController {
 
     return response.json(await formatDate(classAlreadyExists)).status(200);
   }
+  async update(request: Request, response: Response) {
+    const { moduleId } = request.params;
+    const { id, name } = request.body;
+    let { exhibition } = request.body;
+    exhibition = new Date(exhibition);
+    // validation
+    await validateId(id);
+    // await validateUpdate(name);
+
+    if (!moment(exhibition).isValid()) {
+      throw new AppError(
+        "invalid input syntax for Exhibition Date/Hour: 'exhibition':'Wed Jul 21 2021 01:02:00 GMT-0300 (Brasilia Standard Time)'",
+        400
+      );
+    }
+    const classesRepository = getCustomRepository(ClassesRepository);
+    const classAlreadyExists = await classesRepository.findOne({
+      where: { module: moduleId, id: +id }
+    });
+    if (!classAlreadyExists) {
+      throw new AppError('Class Not Found!', 404);
+    }
+    if (
+      classAlreadyExists.name == name &&
+      classAlreadyExists.exhibition == exhibition
+    ) {
+      throw new AppError('Class Params Already Exists!', 409);
+    }
+    const dateToFomat: any = moment(exhibition, 'YYYY-MM-DDTHH:mm:ss').format(
+      'YYYY-MM-DDTHH:mm:ss'
+    );
+    try {
+      const classToUpdate = await classesRepository.save({
+        ...classAlreadyExists,
+        name,
+        exhibition: dateToFomat
+      });
+      classToUpdate.exhibition = classToUpdate.exhibition.replace('T', ' ');
+      return response.json(classToUpdate).status(200);
+    } catch (error) {
+      throw new AppError(error);
+    }
+  }
 
   async destroy(request: Request, response: Response) {
     const { id } = request.params;
@@ -76,7 +123,7 @@ class ClassController {
     }
     try {
       await classesRepository.delete(classAlreadyExists.id);
-      return response.status(200).json(await formatDate(classAlreadyExists));
+      return response.status(200);
     } catch (error) {
       throw new AppError(error);
     }

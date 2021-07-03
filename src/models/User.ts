@@ -23,10 +23,7 @@ export class User extends BaseEntity {
   @Column()
   password: string;
 
-  @Column({ nullable: true })
-  admin: boolean;
-
-  @Column({ nullable: true })
+  @Column({ default: false, nullable: false })
   master: boolean;
 
   @CreateDateColumn()

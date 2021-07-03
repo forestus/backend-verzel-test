@@ -15,13 +15,7 @@ function ensureAuthenticated(
   }
   const [, token] = authorization.split(' ');
   try {
-    const { sub } = verify(
-      token,
-      '4f93ac9d10cb751b8c9c646bc9dbccb9'
-    ) as IPayload;
-    request.userId = sub;
-    console.log(sub);
-
+    verify(token, '4f93ac9d10cb751b8c9c646bc9dbccb9') as IPayload;
     return _next();
   } catch (error) {
     return response.sendStatus(401);

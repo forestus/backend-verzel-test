@@ -15,3 +15,11 @@ export async function validateStore({ name }) {
   // check validity
   await schema.validate({ name }, { abortEarly: false });
 }
+
+export async function validateUpdate({ name }) {
+  const schema = yup.object().shape({
+    name: yup.string().required()
+  });
+  // check validity
+  await schema.validate({ name }, { abortEarly: false });
+}
