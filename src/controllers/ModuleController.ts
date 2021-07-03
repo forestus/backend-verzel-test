@@ -72,5 +72,24 @@ class ModuleController {
 
     return response.json(await formatDate(singleClass)).status(200);
   }
+
+  async destroy(request: Request, response: Response) {
+    const { id } = request.params;
+    // validation
+    await validateId(id);
+
+    const modulesRepository = getCustomRepository(ModulesRepository);
+    const [moduleAlreadyExists] = await modulesRepository.find({ id });
+
+    if (!moduleAlreadyExists) {
+      throw new AppError('Class Not Found!', 404);
+    }
+    try {
+      await modulesRepository.delete(moduleAlreadyExists.id);
+      return response.status(200).json(await formatDate(moduleAlreadyExists));
+    } catch (error) {
+      throw new AppError(error);
+    }
+  }
 }
 export default new ModuleController();

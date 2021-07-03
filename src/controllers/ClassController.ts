@@ -62,5 +62,24 @@ class ClassController {
 
     return response.json(await formatDate(classAlreadyExists)).status(200);
   }
+
+  async destroy(request: Request, response: Response) {
+    const { id } = request.params;
+    // validation
+    await validateId(id);
+
+    const classesRepository = getCustomRepository(ClassesRepository);
+    const [classAlreadyExists] = await classesRepository.find({ id });
+
+    if (!classAlreadyExists) {
+      throw new AppError('Class Not Found!', 404);
+    }
+    try {
+      await classesRepository.delete(classAlreadyExists.id);
+      return response.status(200).json(await formatDate(classAlreadyExists));
+    } catch (error) {
+      throw new AppError(error);
+    }
+  }
 }
 export default new ClassController();

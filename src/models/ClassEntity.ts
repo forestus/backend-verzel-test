@@ -26,7 +26,9 @@ class ClassEntity extends BaseEntity {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => ModuleEntity, (moduleentity) => moduleentity.classes)
+  @ManyToOne(() => ModuleEntity, (moduleentity) => moduleentity.classes, {
+    onDelete: 'CASCADE'
+  })
   module: ModuleEntity;
 }
 export { ClassEntity };

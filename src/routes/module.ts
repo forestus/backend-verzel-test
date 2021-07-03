@@ -13,5 +13,5 @@ router.get('/:id', ModuleController.findOneModuleandAllClasses);
 // router.put('/:id', ModuleController.update);
 // router.patch('/:id', ModuleController.updateNickname);
 // // delete
-// router.delete('/:id', ModuleController.destroy);
+router.delete('/:id', ModuleController.destroy);
 export default router;
