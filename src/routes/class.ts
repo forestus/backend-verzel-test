@@ -8,7 +8,7 @@ import { ensureAdmin } from '@middlewares/ensureAdmin';
 router.post('/:id', ClassController.store);
 // find
 // router.get('/', ClassController.findAllByNameLastName);
-// router.get('/:id', ClassController.findByModule);
+router.get('/:moduleId', ClassController.findOneModuleandClass);
 // // update
 // router.put('/:id', ClassController.update);
 // router.patch('/:id', ClassController.updateNickname);
