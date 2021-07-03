@@ -5,7 +5,7 @@ const router = Router();
 import { ensureMaster } from '@middlewares/ensureMaster';
 
 // auth
-router.get('/login', UserController.login);
+router.post('/login', UserController.login);
 
 router.post('/', UserController.store);
 
