@@ -56,7 +56,7 @@ class ModuleController {
     return response.json(data).status(200);
   }
 
-  async findOneModuleandClass(request: Request, response: Response) {
+  async findOneModuleandAllClasses(request: Request, response: Response) {
     const { id } = request.params;
     const classesRepository = getCustomRepository(ClassesRepository);
     const modulesRepository = getCustomRepository(ModulesRepository);
