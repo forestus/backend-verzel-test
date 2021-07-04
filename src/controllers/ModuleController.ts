@@ -53,8 +53,8 @@ class ModuleController {
       })
     );
     data.sort((a, b) => {
-      if (a.name < b.name) return -1;
-      if (a.name > b.name) return 1;
+      if (a.name.toUpperCase() < b.name.toUpperCase()) return -1;
+      if (a.name.toUpperCase() > b.name.toUpperCase()) return 1;
       return 0;
     });
     return response.json(data).status(200);
