@@ -2,7 +2,7 @@ import ClassController from '@controllers/ClassController';
 import { Router } from 'express';
 const router = Router();
 import { ensureAuthenticated } from '@middlewares/ensureAuthenticated';
-router.get('/:moduleId', ClassController.findOneModuleandClass);
+router.get('/:id', ClassController.findOneModuleandClass);
 
 router.use(ensureAuthenticated);
 
