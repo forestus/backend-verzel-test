@@ -7,7 +7,7 @@ router.get('/:id', ClassController.findOneModuleandClass);
 router.use(ensureAuthenticated);
 
 router.post('/', ClassController.store);
-router.put('/:moduleId', ClassController.update);
+router.put('/:id', ClassController.update);
 router.delete('/:id', ClassController.destroy);
 
 export default router;
