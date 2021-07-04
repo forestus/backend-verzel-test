@@ -18,7 +18,7 @@ class ClassController {
     exhibition = new Date(exhibition);
     let dateFormat = '';
     // validation
-    await validateId(+id);
+    await validateId(Number(id));
     await validateStore({
       name: name
     });
