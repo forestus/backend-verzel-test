@@ -1,20 +1,15 @@
 import * as yup from 'yup';
 
-export async function validateStore(name?, email?, password?) {
+export async function validateStore({ name, email }) {
   const schema = yup.object().shape({
     name: yup.string().required(),
-    email: yup.string().email().required('Email is Required'),
-    password: yup
-      .string()
-      .oneOf([yup.ref('password'), null], 'Passwords must match')
-      .required()
+    email: yup.string().email().required('Email is Required')
   });
   // check validity
   await schema.validate(
     {
       name,
-      email,
-      password
+      email
     },
     { abortEarly: false }
   );
@@ -50,11 +45,25 @@ export async function validateName(name?) {
   );
 }
 
-export async function validateUpdate(name?, email?, password?) {
+export async function validateUpdate({ name, email }) {
   const schema = yup.object().shape({
     name: yup.string(),
-    email: yup.string().email(),
-    password: yup
+    email: yup.string().email()
+  });
+  // check validity
+  await schema.validate(
+    {
+      name,
+      email
+    },
+    { abortEarly: false }
+  );
+}
+
+export async function validateConfirmPassword({ password, confirmPassword }) {
+  const schema = yup.object().shape({
+    password: yup.string().required(),
+    confirmPassword: yup
       .string()
       .oneOf([yup.ref('password'), null], 'Passwords must match')
       .required()
@@ -62,9 +71,8 @@ export async function validateUpdate(name?, email?, password?) {
   // check validity
   await schema.validate(
     {
-      name,
-      email,
-      password
+      password,
+      confirmPassword
     },
     { abortEarly: false }
   );

@@ -1,37 +1,27 @@
 import { Request, Response } from 'express';
 import { getCustomRepository } from 'typeorm';
 import { ClassesRepository } from '@repositories/ClassesRepository';
-import { AppError } from '@errors/AppError';
 import { ModulesRepository } from '@repositories/ModulesRepository';
+import { formatDate } from '@services/dateFormatService';
+import { AppError } from '@errors/AppError';
+import moment from 'moment';
 import {
   validateId,
-  validateStore,
-  validateUpdate
+  validateStoreAndUpdate
 } from '@Utils/validators/classValidate';
-import moment from 'moment';
-import { formatDate } from '@services/dateFormatService';
+
 class ClassController {
   // Cria uma Aula.
   async store(request: Request, response: Response) {
     const { id_module, name } = request.body;
     let { exhibition } = request.body;
     exhibition = new Date(exhibition);
-    let dateFormat = '';
     // validation
     await validateId(Number(id_module));
-    await validateStore({
-      name: name
+    await validateStoreAndUpdate({
+      name: name,
+      exhibition: exhibition
     });
-    if (moment(exhibition, 'YYYY-MM-DDTHH:mm:ss').isValid()) {
-      dateFormat = moment(exhibition, 'YYYY-MM-DDTHH:mm:ss').format(
-        'YYYY-MM-DDTHH:mm:ss'
-      );
-    } else {
-      throw new AppError(
-        "invalid input syntax for Exhibition Date/Hour: 'exhibition':'Wed Jul 21 2021 01:02:00 GMT-0300 (Brasilia Standard Time)'",
-        400
-      );
-    }
 
     const classesRepository = getCustomRepository(ClassesRepository);
     const modulesRepository = getCustomRepository(ModulesRepository);
@@ -39,14 +29,25 @@ class ClassController {
     const moduleAlreadyExists = await modulesRepository.findOne({
       id: id_module
     });
+
+    if (!moduleAlreadyExists) {
+      throw new AppError('Module Not Found!', 404);
+    }
+
     const classAlreadyExists = await classesRepository.findOne({ name });
+
     if (classAlreadyExists) {
       throw new AppError('Class Name Already Exists!', 409);
     }
+
+    const dateFormated = moment(exhibition, 'YYYY-MM-DDTHH:mm:ss').format(
+      'YYYY-MM-DDTHH:mm:ss'
+    );
+
     try {
       const classData = classesRepository.create({
         name,
-        exhibition: dateFormat,
+        exhibition: dateFormated,
         module: moduleAlreadyExists
       });
       const classSaved = await classesRepository.save(classData);
@@ -56,18 +57,23 @@ class ClassController {
     }
   }
 
-  async findOneModuleandClass(request: Request, response: Response) {
+  async findOneClass(request: Request, response: Response) {
     const { id } = request.params;
+
+    await validateId(Number(id));
+
     const classesRepository = getCustomRepository(ClassesRepository);
 
     const classAlreadyExists = await classesRepository.findOne({
       id
     });
+
     if (!classAlreadyExists) {
       throw new AppError('Class Not Found!', 404);
     }
     return response.json(await formatDate(classAlreadyExists)).status(200);
   }
+
   async update(request: Request, response: Response) {
     const { id } = request.params;
     const { name } = request.body;
@@ -76,13 +82,11 @@ class ClassController {
     // validation
     await validateId(Number(id));
     // await validateUpdate(name);
+    await validateStoreAndUpdate({
+      name: name,
+      exhibition: exhibition
+    });
 
-    if (!moment(exhibition).isValid()) {
-      throw new AppError(
-        "invalid input syntax for Exhibition Date/Hour: 'exhibition':'Wed Jul 21 2021 01:02:00 GMT-0300 (Brasilia Standard Time)'",
-        400
-      );
-    }
     const classesRepository = getCustomRepository(ClassesRepository);
     const classAlreadyExists = await classesRepository.findOne({
       id
@@ -96,14 +100,14 @@ class ClassController {
     ) {
       throw new AppError('Class Params Already Exists!', 409);
     }
-    const dateToFomat: any = moment(exhibition, 'YYYY-MM-DDTHH:mm:ss').format(
+    const dateFormated: any = moment(exhibition, 'YYYY-MM-DDTHH:mm:ss').format(
       'YYYY-MM-DDTHH:mm:ss'
     );
     try {
       const classToUpdate = await classesRepository.save({
         ...classAlreadyExists,
         name,
-        exhibition: dateToFomat
+        exhibition: dateFormated
       });
       classToUpdate.exhibition = classToUpdate.exhibition.replace('T', ' ');
       return response.json(classToUpdate).status(200);
@@ -118,11 +122,12 @@ class ClassController {
     await validateId(id);
 
     const classesRepository = getCustomRepository(ClassesRepository);
-    const [classAlreadyExists] = await classesRepository.find({ id });
+    const classAlreadyExists = await classesRepository.findOne({ id });
 
     if (!classAlreadyExists) {
       throw new AppError('Class Not Found!', 404);
     }
+
     try {
       await classesRepository.delete(classAlreadyExists.id);
       return response.sendStatus(200);

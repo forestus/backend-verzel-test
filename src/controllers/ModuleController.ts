@@ -1,10 +1,15 @@
 import { Request, Response } from 'express';
 import { getCustomRepository } from 'typeorm';
 import { ModulesRepository } from '@repositories/ModulesRepository';
-import { AppError } from '@errors/AppError';
 import { ClassesRepository } from '@repositories/ClassesRepository';
-import { validateId, validateStore } from '@Utils/validators/moduleValidate';
+import {
+  validateId,
+  validateStore,
+  validateName
+} from '@Utils/validators/moduleValidate';
 import { formatDate } from '@services/dateFormatService';
+import { AppError } from '@errors/AppError';
+
 class ModuleController {
   async store(request: Request, response: Response) {
     const { name } = request.body;
@@ -36,6 +41,9 @@ class ModuleController {
     const moduleAlreadyExists = await modulesRepository.find({
       order: { name: 'ASC' }
     });
+    if (!moduleAlreadyExists) {
+      throw new AppError('Module Not Found!', 404);
+    }
     await Promise.all(
       moduleAlreadyExists.map(async (moduleObj) => {
         const classAlreadyExists = await classesRepository.find({
@@ -44,36 +52,49 @@ class ModuleController {
           },
           order: { name: 'ASC' }
         });
+
         data.push({
           ...moduleObj,
           length: classAlreadyExists.length,
-          classes: [await formatDate(classAlreadyExists)]
+          classes: await formatDate(classAlreadyExists)
         });
         return data;
       })
     );
+
     data.sort((a, b) => {
       if (a.name.toUpperCase() < b.name.toUpperCase()) return -1;
       if (a.name.toUpperCase() > b.name.toUpperCase()) return 1;
       return 0;
     });
+
     return response.json(data).status(200);
   }
 
   async findOneModuleandAllClasses(request: Request, response: Response) {
     const { id } = request.params;
+
+    await validateId(Number(id));
+
     const classesRepository = getCustomRepository(ClassesRepository);
     const modulesRepository = getCustomRepository(ModulesRepository);
+
     const moduleAlreadyExists = await modulesRepository.findOne({
       id
     });
-    const singleClass = await classesRepository.find({
+
+    if (!moduleAlreadyExists) {
+      throw new AppError('Module Not Found!', 404);
+    }
+
+    const classes = await classesRepository.find({
       where: {
         module: moduleAlreadyExists.id
       },
       order: { name: 'ASC' }
     });
-    moduleAlreadyExists.classes = await formatDate(singleClass);
+
+    moduleAlreadyExists.classes = await formatDate(classes);
 
     return response.json(moduleAlreadyExists).status(200);
   }
@@ -83,6 +104,7 @@ class ModuleController {
     const { name } = request.body;
     // validation
     await validateId(id);
+    await validateName(name);
 
     const modulesRepository = getCustomRepository(ModulesRepository);
     const moduleAlreadyExists = await modulesRepository.findOne({ id });

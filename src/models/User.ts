@@ -5,7 +5,8 @@ import {
   BaseEntity,
   CreateDateColumn,
   BeforeInsert,
-  BeforeUpdate
+  BeforeUpdate,
+  UpdateDateColumn
 } from 'typeorm';
 import bcrypt from 'bcrypt';
 
@@ -27,7 +28,10 @@ export class User extends BaseEntity {
   master: boolean;
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
 
   @BeforeInsert()
   @BeforeUpdate()

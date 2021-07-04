@@ -7,7 +7,8 @@ import {
   validateId,
   validateStore,
   validateUpdate,
-  validateLogin
+  validateLogin,
+  validateConfirmPassword
 } from '@Utils/validators/userValidate';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -15,12 +16,15 @@ const key = '4f93ac9d10cb751b8c9c646bc9dbccb9';
 class UserController {
   // Cria um usuário.
   async store(request: Request, response: Response) {
-    const { name, email, password } = request.body;
+    const { name, email, password, confirmPassword } = request.body;
 
     // validation
-    await validateStore(name, email, password);
+    await validateStore({ name, email });
+
+    await validateConfirmPassword({ password, confirmPassword });
 
     const userRepository = getCustomRepository(UsersRepository);
+
     const userAlreadyExists = await userRepository.findOne({
       email: email.toLowerCase()
     });
@@ -36,7 +40,16 @@ class UserController {
         password
       });
       const user = await userRepository.save(userData);
-      return response.json(user).status(201);
+      return response
+        .json({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          master: user.master,
+          createdAt: user.created_at,
+          updated_at: user.updated_at
+        })
+        .status(201);
     } catch (error) {
       throw new AppError(error);
     }
@@ -74,47 +87,60 @@ class UserController {
     const { email, password } = request.body;
     await validateLogin(email, password);
     const usersRepository = getCustomRepository(UsersRepository);
-    const user = await usersRepository.findOne({ email });
+    const userAlreadyExists = await usersRepository.findOne({ email });
 
-    const payloadId = user.id;
-    if (!user.password) {
-      return response
-        .status(400)
-        .json({ error: 'Email Incorrectly or Does Not Exists' });
-    } else {
-      const condition = await bcrypt.compare(password, user.password);
-      if (!condition) {
-        return response.status(400).json({ error: 'password wrong' });
-      }
-      const token = jwt.sign({ payloadId, master: user.master }, key, {
-        subject: String(user.id),
-        expiresIn: '1h'
-      });
-      return response.status(201).json({ user, token });
+    if (!userAlreadyExists) {
+      throw new AppError('User Not Found', 404);
     }
+    const payloadId = userAlreadyExists.id;
+
+    const condition = await bcrypt.compare(
+      password,
+      userAlreadyExists.password
+    );
+    if (!condition) {
+      return response.status(400).json({ error: 'password wrong' });
+    }
+    const token = jwt.sign(
+      { payloadId, master: userAlreadyExists.master },
+      key,
+      {
+        subject: String(userAlreadyExists.id),
+        expiresIn: '1h'
+      }
+    );
+    return response.status(201).json({ ...userAlreadyExists, token });
   }
 
   // Altera nome, email e password do usuário recebido no corpo da requisição, baseado no id recebido como parâmetro de rota: retorna o usuário alterado com as novas informações.
   async update(request: Request, response: Response) {
     const { id } = request.params;
-    const { name, email, password } = request.body;
+    const { name, email, password, confirmPassword } = request.body;
     // validation
     await validateId(id);
-    await validateUpdate(name, email, password);
 
     const userRepository = getCustomRepository(UsersRepository);
     const userAlreadyExists = await userRepository.findOne({ id });
 
-    if (
-      userAlreadyExists.name == name &&
-      userAlreadyExists.email == email &&
-      userAlreadyExists.password == password
-    ) {
-      throw new AppError('User Params Already Exists!', 409);
-    }
-
     if (!userAlreadyExists) {
       throw new AppError('User Not Found!', 404);
+    }
+
+    await validateUpdate({ name, email });
+
+    if (password && confirmPassword) {
+      await validateConfirmPassword({ password, confirmPassword });
+      if (
+        userAlreadyExists.name == name &&
+        userAlreadyExists.email == email &&
+        userAlreadyExists.password == password
+      ) {
+        throw new AppError('User Params Already Exists!', 409);
+      }
+    } else {
+      if (userAlreadyExists.name == name && userAlreadyExists.email == email) {
+        throw new AppError('User Params Already Exists!', 409);
+      }
     }
 
     try {
@@ -122,7 +148,8 @@ class UserController {
         ...userAlreadyExists,
         name,
         email,
-        password
+        password:
+          password && confirmPassword ? password : userAlreadyExists.password
       });
       return response.json(user).status(200);
     } catch (error) {
@@ -133,7 +160,6 @@ class UserController {
   // Deleta um usuário baseado no id recebido como parâmetro de rota: retorna o status de sucesso.
   async destroy(request: Request, response: Response) {
     const { id } = request.params;
-    // validation
     await validateId(id);
 
     const usersRepository = getCustomRepository(UsersRepository);
@@ -142,6 +168,7 @@ class UserController {
     if (!userAlreadyExists) {
       throw new AppError('User Not Found!', 404);
     }
+
     try {
       await usersRepository.delete(userAlreadyExists.id);
       return response.sendStatus(200);
