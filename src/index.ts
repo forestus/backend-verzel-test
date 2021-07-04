@@ -1,12 +1,12 @@
 import 'reflect-metadata';
-import express from 'express';
 import 'express-async-errors';
-import morgan from 'morgan';
-import { errorMiddleware } from '@middlewares/errorMiddleware';
-import cors from 'cors';
-import createConnection from '@database/index';
-import routes from '@routes/index';
+import express from 'express';
 import helmet from 'helmet';
+import morgan from 'morgan';
+import cors from 'cors';
+import routes from '@routes/index';
+import createConnection from '@database/index';
+import { errorMiddleware } from '@middlewares/errorMiddleware';
 import { UsersRepository } from '@repositories/UsersRepository';
 import { getCustomRepository } from 'typeorm';
 
@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 
 // db connection
 createConnection().then(async (connection) => {
-  //create master
+  // create master
   const email = 'forestus7@gmail.com'.toLowerCase();
   const userRepository = getCustomRepository(UsersRepository);
   const userAlreadyExists = await userRepository.findOne({
