@@ -13,12 +13,12 @@ import { formatDate } from '@services/dateFormatService';
 class ClassController {
   // Cria uma Aula.
   async store(request: Request, response: Response) {
-    const { module_id, name } = request.body;
+    const { id_module, name } = request.body;
     let { exhibition } = request.body;
     exhibition = new Date(exhibition);
     let dateFormat = '';
     // validation
-    await validateId(Number(module_id));
+    await validateId(Number(id_module));
     await validateStore({
       name: name
     });
@@ -37,7 +37,7 @@ class ClassController {
     const modulesRepository = getCustomRepository(ModulesRepository);
 
     const moduleAlreadyExists = await modulesRepository.findOne({
-      id: module_id
+      id: id_module
     });
     const classAlreadyExists = await classesRepository.findOne({ name });
     if (classAlreadyExists) {
@@ -68,7 +68,7 @@ class ClassController {
     return response.json(await formatDate(classAlreadyExists)).status(200);
   }
   async update(request: Request, response: Response) {
-    const { module_id } = request.params;
+    const { id_module } = request.params;
     const { id, name } = request.body;
     let { exhibition } = request.body;
     exhibition = new Date(exhibition);
@@ -84,7 +84,7 @@ class ClassController {
     }
     const classesRepository = getCustomRepository(ClassesRepository);
     const classAlreadyExists = await classesRepository.findOne({
-      where: { module: module_id, id: +id }
+      where: { module: id_module, id: +id }
     });
     if (!classAlreadyExists) {
       throw new AppError('Class Not Found!', 404);
