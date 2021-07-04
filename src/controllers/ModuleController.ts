@@ -69,8 +69,9 @@ class ModuleController {
       },
       order: { name: 'ASC' }
     });
+    moduleAlreadyExists.classes = await formatDate(singleClass);
 
-    return response.json(await formatDate(singleClass)).status(200);
+    return response.json(moduleAlreadyExists).status(200);
   }
 
   async update(request: Request, response: Response) {
