@@ -13,7 +13,6 @@ import { AppError } from '@errors/AppError';
 class ModuleController {
   async store(request: Request, response: Response) {
     const { name } = request.body;
-    // validation
     await validateStore({ name });
 
     const modulesRepository = getCustomRepository(ModulesRepository);

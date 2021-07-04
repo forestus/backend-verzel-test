@@ -11,12 +11,10 @@ import {
 } from '@Utils/validators/classValidate';
 
 class ClassController {
-  // Cria uma Aula.
   async store(request: Request, response: Response) {
     const { id_module, name } = request.body;
     let { exhibition } = request.body;
     exhibition = new Date(exhibition);
-    // validation
     await validateId(Number(id_module));
     await validateStoreAndUpdate({
       name: name,
@@ -79,9 +77,7 @@ class ClassController {
     const { name } = request.body;
     let { exhibition } = request.body;
     exhibition = new Date(exhibition);
-    // validation
     await validateId(Number(id));
-    // await validateUpdate(name);
     await validateStoreAndUpdate({
       name: name,
       exhibition: exhibition
@@ -118,7 +114,6 @@ class ClassController {
 
   async destroy(request: Request, response: Response) {
     const { id } = request.params;
-    // validation
     await validateId(id);
 
     const classesRepository = getCustomRepository(ClassesRepository);

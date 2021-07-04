@@ -14,11 +14,9 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 const key = '4f93ac9d10cb751b8c9c646bc9dbccb9';
 class UserController {
-  // Cria um usuário.
   async store(request: Request, response: Response) {
     const { name, email, password, confirmPassword } = request.body;
 
-    // validation
     await validateStore({ name, email });
 
     await validateConfirmPassword({ password, confirmPassword });
@@ -55,9 +53,7 @@ class UserController {
     }
   }
 
-  // Lista todos os usuários cadastrados filtrados pelo campo nome: retorna um array de usuários.
   async findAll(request: Request, response: Response) {
-    // validation
     const userRepository = getCustomRepository(UsersRepository);
     const userAlreadyExists = await userRepository.find();
 
@@ -67,10 +63,8 @@ class UserController {
     return response.json(userAlreadyExists).status(200);
   }
 
-  // Lista um usuário pelo name passado como parâmetro: retorna um único usuário.
   async findByName(request: Request, response: Response) {
     const { name } = request.body;
-    // validation
     await validateName(name);
 
     const userRepository = getCustomRepository(UsersRepository);
@@ -112,11 +106,9 @@ class UserController {
     return response.status(201).json({ ...userAlreadyExists, token });
   }
 
-  // Altera nome, email e password do usuário recebido no corpo da requisição, baseado no id recebido como parâmetro de rota: retorna o usuário alterado com as novas informações.
   async update(request: Request, response: Response) {
     const { id } = request.params;
     const { name, email, password, confirmPassword } = request.body;
-    // validation
     await validateId(id);
 
     const userRepository = getCustomRepository(UsersRepository);
@@ -157,7 +149,6 @@ class UserController {
     }
   }
 
-  // Deleta um usuário baseado no id recebido como parâmetro de rota: retorna o status de sucesso.
   async destroy(request: Request, response: Response) {
     const { id } = request.params;
     await validateId(id);
