@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { getCustomRepository, Like } from 'typeorm';
+import { getCustomRepository } from 'typeorm';
 import { ModulesRepository } from '@repositories/ModulesRepository';
 import { AppError } from '@errors/AppError';
 import { ClassesRepository } from '@repositories/ClassesRepository';
 import { validateId, validateStore } from '@Utils/validators/moduleValidate';
-import { formatDate } from '../services/dateFormatService';
+import { formatDate } from '@services/dateFormatService';
 class ModuleController {
   async store(request: Request, response: Response) {
     const { name } = request.body;

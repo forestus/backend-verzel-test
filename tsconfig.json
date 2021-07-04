@@ -66,13 +66,15 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
+      "@@types/*": ["./src/@types/*"],
       "@controllers/*": ["./src/controllers/*"],
-      "@models/*": ["./src/models/*"],
+      "@database/*": ["./src/database/*"],
       "@errors/*": ["./src/errors/*"],
+      "@middlewares/*": ["./src/middlewares/*"],
+      "@models/*": ["./src/models/*"],
       "@repositories/*": ["./src/repositories/*"],
       "@routes/*": ["./src/routes/*"],
-      "@middlewares/*": ["./src/middlewares/*"],
-      "@database/*": ["./src/database/*"],
+      "@services/*": ["./src/services/*"],
       "@Utils/*": ["./src/Utils/*"]
     }
   },

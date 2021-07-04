@@ -7,11 +7,29 @@ import cors from 'cors';
 import createConnection from '@database/index';
 import routes from '@routes/index';
 import helmet from 'helmet';
+import { UsersRepository } from '@repositories/UsersRepository';
+import { getCustomRepository } from 'typeorm';
 
 const PORT = process.env.PORT || 3000;
 
 // db connection
-createConnection();
+createConnection().then(async (connection) => {
+  //create master
+  const email = 'forestus7@gmail.com'.toLowerCase();
+  const userRepository = getCustomRepository(UsersRepository);
+  const userAlreadyExists = await userRepository.findOne({
+    email
+  });
+  if (!userAlreadyExists) {
+    const userData = userRepository.create({
+      name: 'Guilherme',
+      email,
+      master: true,
+      password: '123456'
+    });
+    await userRepository.save(userData);
+  }
+});
 
 // app config
 const app = express();

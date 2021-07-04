@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getCustomRepository, Like } from 'typeorm';
+import { getCustomRepository } from 'typeorm';
 import { UsersRepository } from '@repositories/UsersRepository';
 import { AppError } from '@errors/AppError';
 import {

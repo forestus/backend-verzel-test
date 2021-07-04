@@ -9,12 +9,11 @@ import {
   validateUpdate
 } from '@Utils/validators/classValidate';
 import moment from 'moment';
-import { formatDate } from 'src/services/dateFormatService';
+import { formatDate } from '@services/dateFormatService';
 class ClassController {
   // Cria uma Aula.
   async store(request: Request, response: Response) {
-    const { id } = request.params;
-    const { name } = request.body;
+    const { id, name } = request.body;
     let { exhibition } = request.body;
     exhibition = new Date(exhibition);
     let dateFormat = '';

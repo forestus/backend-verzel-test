@@ -15,6 +15,7 @@
       "module-resolver",
       {
         "alias": {
+          "@@types": "./src/@types",
           "@controllers": "./src/controllers",
           "@database": "./src/database",
           "@errors": "./src/errors",
@@ -22,6 +23,7 @@
           "@models": "./src/models",
           "@repositories": "./src/repositories",
           "@routes": "./src/routes",
+          "@services": "./src/services",
           "@Utils": "./src/Utils"
         }
       }
