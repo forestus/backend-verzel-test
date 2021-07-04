@@ -18,7 +18,7 @@ class ClassController {
     exhibition = new Date(exhibition);
     let dateFormat = '';
     // validation
-    await validateId(Number(id));
+    await validateId(Number(moduleId));
     await validateStore({
       name: name
     });
@@ -36,7 +36,9 @@ class ClassController {
     const classesRepository = getCustomRepository(ClassesRepository);
     const modulesRepository = getCustomRepository(ModulesRepository);
 
-    const moduleAlreadyExists = await modulesRepository.findOne({ id });
+    const moduleAlreadyExists = await modulesRepository.findOne({
+      id: moduleId
+    });
     const classAlreadyExists = await classesRepository.findOne({ name });
     if (classAlreadyExists) {
       throw new AppError('Class Name Already Exists!', 409);
