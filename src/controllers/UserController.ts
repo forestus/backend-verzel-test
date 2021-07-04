@@ -103,7 +103,7 @@ class UserController {
         expiresIn: '1h'
       }
     );
-    return response.status(201).json({ user: { ...userAlreadyExists }, token });
+    return response.status(200).json({ user: { ...userAlreadyExists }, token });
   }
 
   async update(request: Request, response: Response) {
