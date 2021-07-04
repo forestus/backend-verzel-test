@@ -6,7 +6,7 @@ router.get('/:moduleId', ClassController.findOneModuleandClass);
 
 router.use(ensureAuthenticated);
 
-router.post('/:id', ClassController.store);
+router.post('/', ClassController.store);
 router.put('/:moduleId', ClassController.update);
 router.delete('/:id', ClassController.destroy);
 
