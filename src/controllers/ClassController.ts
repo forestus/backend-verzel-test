@@ -123,7 +123,7 @@ class ClassController {
     }
     try {
       await classesRepository.delete(classAlreadyExists.id);
-      return response.status(200);
+      return response.sendStatus(200);
     } catch (error) {
       throw new AppError(error);
     }

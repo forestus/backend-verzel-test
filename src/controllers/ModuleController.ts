@@ -119,7 +119,7 @@ class ModuleController {
     }
     try {
       await modulesRepository.delete(moduleAlreadyExists.id);
-      return response.status(200);
+      return response.sendStatus(200);
     } catch (error) {
       throw new AppError(error);
     }
