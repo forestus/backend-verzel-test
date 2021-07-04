@@ -69,12 +69,12 @@ class ClassController {
     return response.json(await formatDate(classAlreadyExists)).status(200);
   }
   async update(request: Request, response: Response) {
-    const { id_module } = request.params;
-    const { id, name } = request.body;
+    const { id } = request.params;
+    const { name } = request.body;
     let { exhibition } = request.body;
     exhibition = new Date(exhibition);
     // validation
-    await validateId(id);
+    await validateId(Number(id));
     // await validateUpdate(name);
 
     if (!moment(exhibition).isValid()) {
@@ -85,7 +85,7 @@ class ClassController {
     }
     const classesRepository = getCustomRepository(ClassesRepository);
     const classAlreadyExists = await classesRepository.findOne({
-      where: { module: id_module, id: +id }
+      id
     });
     if (!classAlreadyExists) {
       throw new AppError('Class Not Found!', 404);
