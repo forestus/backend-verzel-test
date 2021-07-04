@@ -57,13 +57,11 @@ class ClassController {
   }
 
   async findOneModuleandClass(request: Request, response: Response) {
-    const { moduleId } = request.params;
-    const { id } = request.body;
+    const { id } = request.params;
     const classesRepository = getCustomRepository(ClassesRepository);
 
     const classAlreadyExists = await classesRepository.findOne({
-      where: { module: moduleId, id },
-      relations: ['module']
+      id
     });
 
     return response.json(await formatDate(classAlreadyExists)).status(200);
