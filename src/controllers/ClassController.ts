@@ -50,7 +50,13 @@ class ClassController {
         module: moduleAlreadyExists
       });
       const classSaved = await classesRepository.save(classData);
-      return response.json(await formatDate(classSaved)).status(201);
+
+      return response
+        .json({
+          id_module: moduleAlreadyExists.id,
+          class: await formatDate(classSaved)
+        })
+        .status(201);
     } catch (error) {
       throw new AppError(error);
     }
