@@ -13,7 +13,7 @@ import { formatDate } from '@services/dateFormatService';
 class ClassController {
   // Cria uma Aula.
   async store(request: Request, response: Response) {
-    const { id, name } = request.body;
+    const { moduleId, name } = request.body;
     let { exhibition } = request.body;
     exhibition = new Date(exhibition);
     let dateFormat = '';
