@@ -10,7 +10,7 @@ router.post('/', UserController.store);
 router.use(ensureMaster);
 
 router.get('/', UserController.findAll);
-router.get('/', UserController.findByName);
+router.get('/:id', UserController.findOne);
 router.put('/:id', UserController.update);
 router.delete('/:id', UserController.destroy);
 

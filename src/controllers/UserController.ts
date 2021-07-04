@@ -15,7 +15,7 @@ import jwt from 'jsonwebtoken';
 const key = '4f93ac9d10cb751b8c9c646bc9dbccb9';
 class UserController {
   async store(request: Request, response: Response) {
-    const { name, email, password, confirmPassword } = request.body;
+    const { name, email, master, password, confirmPassword } = request.body;
 
     await validateStore({ name, email });
 
@@ -35,7 +35,8 @@ class UserController {
       const userData = userRepository.create({
         name,
         email: email.toLowerCase(),
-        password
+        password,
+        master
       });
       const user = await userRepository.save(userData);
       return response
@@ -63,12 +64,12 @@ class UserController {
     return response.json(userAlreadyExists).status(200);
   }
 
-  async findByName(request: Request, response: Response) {
-    const { name } = request.body;
-    await validateName(name);
+  async findOne(request: Request, response: Response) {
+    const { id } = request.params;
+    await validateId(id);
 
     const userRepository = getCustomRepository(UsersRepository);
-    const userAlreadyExists = await userRepository.findOne({ name });
+    const userAlreadyExists = await userRepository.findOne({ id });
 
     if (!userAlreadyExists) {
       throw new AppError('User Not Found', 404);
@@ -108,7 +109,7 @@ class UserController {
 
   async update(request: Request, response: Response) {
     const { id } = request.params;
-    const { name, email, password, confirmPassword } = request.body;
+    const { name, email, master, password, confirmPassword } = request.body;
     await validateId(id);
 
     const userRepository = getCustomRepository(UsersRepository);
@@ -125,7 +126,8 @@ class UserController {
       if (
         userAlreadyExists.name == name &&
         userAlreadyExists.email == email &&
-        userAlreadyExists.password == password
+        userAlreadyExists.password == password &&
+        userAlreadyExists.master == master
       ) {
         throw new AppError('User Params Already Exists!', 409);
       }
@@ -140,6 +142,7 @@ class UserController {
         ...userAlreadyExists,
         name,
         email,
+        master,
         password:
           password && confirmPassword ? password : userAlreadyExists.password
       });
