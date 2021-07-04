@@ -63,7 +63,9 @@ class ClassController {
     const classAlreadyExists = await classesRepository.findOne({
       id
     });
-
+    if (!classAlreadyExists) {
+      throw new AppError('Class Not Found!', 404);
+    }
     return response.json(await formatDate(classAlreadyExists)).status(200);
   }
   async update(request: Request, response: Response) {
