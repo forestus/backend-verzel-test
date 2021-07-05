@@ -19,7 +19,7 @@ class ModuleController {
     const moduleAlreadyExists = await modulesRepository.findOne({ name });
 
     if (moduleAlreadyExists) {
-      throw new AppError('Module Already Exists!', 409);
+      throw new AppError('Este Módulo Já Existe!', 409);
     }
 
     try {
@@ -41,7 +41,7 @@ class ModuleController {
       order: { name: 'ASC' }
     });
     if (!moduleAlreadyExists) {
-      throw new AppError('Module Not Found!', 404);
+      throw new AppError('Módulo Não Encontrado!', 404);
     }
     await Promise.all(
       moduleAlreadyExists.map(async (moduleObj) => {
@@ -83,7 +83,7 @@ class ModuleController {
     });
 
     if (!moduleAlreadyExists) {
-      throw new AppError('Module Not Found!', 404);
+      throw new AppError('Módulo Não Encontrado!', 404);
     }
 
     const classes = await classesRepository.find({
@@ -109,11 +109,11 @@ class ModuleController {
     const moduleAlreadyExists = await modulesRepository.findOne({ id });
 
     if (!moduleAlreadyExists) {
-      throw new AppError('Module Not Found!', 404);
+      throw new AppError('Módulo Não Encontrado!', 404);
     }
 
     if (moduleAlreadyExists.name == name) {
-      throw new AppError('Module Params Already Exists!', 409);
+      throw new AppError('Esta Alteração já foi feita!', 409);
     }
 
     try {
@@ -136,7 +136,7 @@ class ModuleController {
     const [moduleAlreadyExists] = await modulesRepository.find({ id });
 
     if (!moduleAlreadyExists) {
-      throw new AppError('Module Not Found!', 404);
+      throw new AppError('Módulo Não Encontrado!', 404);
     }
     try {
       await modulesRepository.delete(moduleAlreadyExists.id);

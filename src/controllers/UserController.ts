@@ -28,7 +28,7 @@ class UserController {
     });
 
     if (userAlreadyExists) {
-      throw new AppError('User Already Exists!', 409);
+      throw new AppError('Este Usuário Já Existe!', 409);
     }
 
     try {
@@ -59,7 +59,7 @@ class UserController {
     const userAlreadyExists = await userRepository.find();
 
     if (!userAlreadyExists) {
-      throw new AppError('Users Not Found!', 404);
+      throw new AppError('Usuário não Encontrado!', 404);
     }
     return response
       .json(
@@ -85,7 +85,7 @@ class UserController {
     const user = await userRepository.findOne({ id });
 
     if (!user) {
-      throw new AppError('User Not Found', 404);
+      throw new AppError('Usuário não Encontrado', 404);
     }
 
     return response
@@ -107,7 +107,7 @@ class UserController {
     const userAlreadyExists = await usersRepository.findOne({ email });
 
     if (!userAlreadyExists) {
-      throw new AppError('User Not Found', 404);
+      throw new AppError('Usuário não Encontrado', 404);
     }
     const payloadId = userAlreadyExists.id;
     console.log(String(password));
@@ -148,7 +148,10 @@ class UserController {
     await validateUpdate({ name, email });
     const userEmailAlreadyExists = await userRepository.findOne({ email });
 
-    if (userEmailAlreadyExists) {
+    if (
+      userEmailAlreadyExists &&
+      userEmailAlreadyExists.id !== userAlreadyExists.id
+    ) {
       throw new AppError('User Email Already Exists!', 409);
     }
 

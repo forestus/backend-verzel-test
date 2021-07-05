@@ -29,13 +29,13 @@ class ClassController {
     });
 
     if (!moduleAlreadyExists) {
-      throw new AppError('Module Not Found!', 404);
+      throw new AppError('Módulo Não Encontrado!', 404);
     }
 
     const classAlreadyExists = await classesRepository.findOne({ name });
 
     if (classAlreadyExists) {
-      throw new AppError('Class Name Already Exists!', 409);
+      throw new AppError('Aula Não Encontrada!', 409);
     }
 
     const dateFormated = moment(exhibition, 'YYYY-MM-DDTHH:mm:ss').format(
@@ -67,7 +67,7 @@ class ClassController {
     });
 
     if (!classAlreadyExists) {
-      throw new AppError('Class Not Found!', 404);
+      throw new AppError('Aula Não Encontrada!', 404);
     }
     return response.json(await formatDate(classAlreadyExists)).status(200);
   }
@@ -88,13 +88,13 @@ class ClassController {
       id
     });
     if (!classAlreadyExists) {
-      throw new AppError('Class Not Found!', 404);
+      throw new AppError('Aula Não Encontrada!', 404);
     }
     if (
       classAlreadyExists.name == name &&
       classAlreadyExists.exhibition == exhibition
     ) {
-      throw new AppError('Class Params Already Exists!', 409);
+      throw new AppError('Esta Alteração já foi feita!', 409);
     }
     const dateFormated: any = moment(exhibition, 'YYYY-MM-DDTHH:mm:ss').format(
       'YYYY-MM-DDTHH:mm:ss'
@@ -120,7 +120,7 @@ class ClassController {
     const classAlreadyExists = await classesRepository.findOne({ id });
 
     if (!classAlreadyExists) {
-      throw new AppError('Class Not Found!', 404);
+      throw new AppError('Aula Não Encontrada!', 404);
     }
 
     try {
