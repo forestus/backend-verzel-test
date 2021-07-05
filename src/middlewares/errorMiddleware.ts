@@ -28,8 +28,7 @@ function errorMiddleware(
     }
   }
   return response.status(500).json({
-    status: 'Error',
-    message: `Internal Server Error ${err.message}`
+    error: `Internal Server Error ${err.message}`
   });
 }
 export { errorMiddleware };
