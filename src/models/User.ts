@@ -34,8 +34,12 @@ export class User extends BaseEntity {
   updated_at: Date;
 
   @BeforeInsert()
-  @BeforeUpdate()
   hashPassword() {
+    this.password = bcrypt.hashSync(this.password, 10);
+  }
+
+  @BeforeUpdate()
+  hashPasswordUpdate() {
     this.password = bcrypt.hashSync(this.password, 10);
   }
 }

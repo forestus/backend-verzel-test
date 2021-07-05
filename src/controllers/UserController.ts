@@ -61,7 +61,20 @@ class UserController {
     if (!userAlreadyExists) {
       throw new AppError('Users Not Found!', 404);
     }
-    return response.json(userAlreadyExists).status(200);
+    return response
+      .json(
+        userAlreadyExists.map((user) => {
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            master: user.master,
+            createdAt: user.created_at,
+            updated_at: user.updated_at
+          };
+        })
+      )
+      .status(200);
   }
 
   async findOne(request: Request, response: Response) {
@@ -69,18 +82,27 @@ class UserController {
     await validateId(id);
 
     const userRepository = getCustomRepository(UsersRepository);
-    const userAlreadyExists = await userRepository.findOne({ id });
+    const user = await userRepository.findOne({ id });
 
-    if (!userAlreadyExists) {
+    if (!user) {
       throw new AppError('User Not Found', 404);
     }
 
-    return response.json({ ...userAlreadyExists }).status(200);
+    return response
+      .json({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        master: user.master,
+        createdAt: user.created_at,
+        updated_at: user.updated_at
+      })
+      .status(200);
   }
 
   async login(request: Request, response: Response) {
     const { email, password } = request.body;
-    await validateLogin(email, password);
+    await validateLogin(email, String(password));
     const usersRepository = getCustomRepository(UsersRepository);
     const userAlreadyExists = await usersRepository.findOne({ email });
 
@@ -88,11 +110,13 @@ class UserController {
       throw new AppError('User Not Found', 404);
     }
     const payloadId = userAlreadyExists.id;
-
+    console.log(String(password));
+    console.log(userAlreadyExists.password);
     const condition = await bcrypt.compare(
-      password,
+      String(password),
       userAlreadyExists.password
     );
+
     if (!condition) {
       return response.status(400).json({ error: 'password wrong' });
     }
@@ -109,7 +133,10 @@ class UserController {
 
   async update(request: Request, response: Response) {
     const { id } = request.params;
-    const { name, email, master, password, confirmPassword } = request.body;
+    const { name, email, master } = request.body;
+    let { password, confirmPassword } = request.body;
+    password = String(password);
+    confirmPassword = String(confirmPassword);
     await validateId(id);
 
     const userRepository = getCustomRepository(UsersRepository);
@@ -136,16 +163,16 @@ class UserController {
         throw new AppError('User Params Already Exists!', 409);
       }
     }
-
     try {
-      const user = await userRepository.save({
-        ...userAlreadyExists,
-        name,
-        email,
-        master,
-        password:
-          password && confirmPassword ? password : userAlreadyExists.password
-      });
+      const user = await userRepository.save(
+        userRepository.create({
+          name: name ? name : userAlreadyExists.name,
+          email: email ? email : userAlreadyExists.email,
+          master: master ? master : userAlreadyExists.master,
+          password:
+            password && confirmPassword ? password : userAlreadyExists.password
+        })
+      );
       return response.json(user).status(200);
     } catch (error) {
       throw new AppError(error);
@@ -155,7 +182,6 @@ class UserController {
   async destroy(request: Request, response: Response) {
     const { id } = request.params;
     await validateId(id);
-
     const usersRepository = getCustomRepository(UsersRepository);
     const [userAlreadyExists] = await usersRepository.find({ id });
 
