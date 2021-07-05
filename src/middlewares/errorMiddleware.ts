@@ -19,7 +19,7 @@ function errorMiddleware(
     });
   }
   return response.status(500).json({
-    error: `Internal Server Error ${err.message}`
+    error: `Erro Interno do Servidor! - ${err.message}`
   });
 }
 export { errorMiddleware };
