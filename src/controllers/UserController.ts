@@ -3,7 +3,6 @@ import { getCustomRepository } from 'typeorm';
 import { UsersRepository } from '@repositories/UsersRepository';
 import { AppError } from '@errors/AppError';
 import {
-  validateName,
   validateId,
   validateStore,
   validateUpdate,
@@ -85,7 +84,7 @@ class UserController {
     const user = await userRepository.findOne({ id });
 
     if (!user) {
-      throw new AppError('Usuário não Encontrado', 404);
+      throw new AppError('Usuário não Encontrado!', 404);
     }
 
     return response
@@ -107,7 +106,7 @@ class UserController {
     const userAlreadyExists = await usersRepository.findOne({ email });
 
     if (!userAlreadyExists) {
-      throw new AppError('Usuário não Encontrado', 404);
+      throw new AppError('Usuário não Encontrado!', 404);
     }
     const payloadId = userAlreadyExists.id;
     console.log(String(password));
@@ -118,7 +117,7 @@ class UserController {
     );
 
     if (!condition) {
-      return response.status(400).json({ error: 'password wrong' });
+      return response.status(400).json({ error: 'Senha Incorreta!' });
     }
     const token = jwt.sign(
       { payloadId, master: userAlreadyExists.master },
@@ -142,7 +141,7 @@ class UserController {
     const userAlreadyExists = await userRepository.findOne({ id });
 
     if (!userAlreadyExists) {
-      throw new AppError('User Not Found!', 404);
+      throw new AppError('Usuário não Encontrado!', 404);
     }
 
     await validateUpdate({ name, email });
@@ -152,7 +151,7 @@ class UserController {
       userEmailAlreadyExists &&
       userEmailAlreadyExists.id !== userAlreadyExists.id
     ) {
-      throw new AppError('User Email Already Exists!', 409);
+      throw new AppError('Este Email Já Existe!', 409);
     }
 
     if (password && confirmPassword) {
@@ -163,11 +162,11 @@ class UserController {
         userAlreadyExists.password == password &&
         userAlreadyExists.master == master
       ) {
-        throw new AppError('User Params Already Exists!', 409);
+        throw new AppError('Esta Alteração já foi feita!', 409);
       }
     } else {
       if (userAlreadyExists.name == name && userAlreadyExists.email == email) {
-        throw new AppError('User Params Already Exists!', 409);
+        throw new AppError('Esta Alteração já foi feita!', 409);
       }
     }
 
@@ -194,7 +193,7 @@ class UserController {
     const [userAlreadyExists] = await usersRepository.find({ id });
 
     if (!userAlreadyExists) {
-      throw new AppError('User Not Found!', 404);
+      throw new AppError('Usuário não Encontrado!', 404);
     }
 
     try {
