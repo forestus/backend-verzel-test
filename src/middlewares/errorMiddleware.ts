@@ -23,7 +23,7 @@ function errorMiddleware(
       });
     } else {
       return response.status(err.statusCode).json({
-        message: err.message
+        error: err.message
       });
     }
   }
