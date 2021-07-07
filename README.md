@@ -47,6 +47,8 @@ comandos para manipulação de migrations e eslint estão no package.json em "sc
 
 - npm run build na pasta backend
 
+- caso esteja no linux modifique o comando no package.json em "build", troque "&& npm run copy:win" para "&& npm run copy:unix".
+
 - abra a pasta dist no terminal com "cd dist" e dê um "npm start".
 
 </br>
