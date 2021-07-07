@@ -61,4 +61,4 @@ comandos para manipulação do PM2 estão no package.json em "scripts", digite "
 
 </br>
 
-- para consumir da aplicação utilize Insomnia (https://insomnia.rest/download) ou Postman(https://www.postman.com/downloads/).
+- para consumir da aplicação utilize Insomnia (https://insomnia.rest/download) ou Postman(https://www.postman.com/downloads/), local: http://localhost:3000.
