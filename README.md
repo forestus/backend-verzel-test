@@ -47,8 +47,6 @@ comandos para manipulação de migrations e eslint estão no package.json em "sc
 
 - npm run build na pasta backend
 
-- copie os arquivos "package.json", "ormconfig.json", "pm2config.json" e a pasta "docs" para a pasta dist.
-
 - abra a pasta dist no terminal com "cd dist" e dê um "npm start".
 
 </br>
