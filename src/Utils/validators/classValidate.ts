@@ -17,10 +17,7 @@ export async function validateStoreAndUpdate({ name, exhibition }) {
   // check validity
   await schema.validate({ name }, { abortEarly: false });
   if (!moment(exhibition, 'YYYY-MM-DDTHH:mm:ss').isValid()) {
-    throw new AppError(
-      "invalid input syntax for Exhibition Date/Hour: 'exhibition':'Wed Jul 21 2021 01:02:00 GMT-0300 (Brasilia Standard Time)'",
-      400
-    );
+    throw new AppError('Formato de Data Inválido!', 400);
   }
 }
 

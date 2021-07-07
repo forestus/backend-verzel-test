@@ -1,7 +1,6 @@
 import { AppError } from '@errors/AppError';
 import { NextFunction, Request, Response } from 'express';
 import { ValidationError } from 'yup';
-import translate from 'translate';
 async function errorMiddleware(
   err: Error,
   request: Request,
@@ -10,16 +9,16 @@ async function errorMiddleware(
 ) {
   if (err instanceof ValidationError) {
     return response.status(400).json({
-      error: await translate(err.errors)
+      error: err.errors
     });
   }
   if (err instanceof AppError) {
     return response.status(err.statusCode).json({
-      error: await translate(err.message)
+      error: err.message
     });
   }
   return response.status(500).json({
-    error: `Erro Interno do Servidor! - ${await translate(err.message)}`
+    error: `Erro Interno do Servidor! - ${err.message}`
   });
 }
 export { errorMiddleware };
